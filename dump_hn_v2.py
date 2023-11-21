@@ -30,7 +30,8 @@ def fetch_and_save_text(post_id):
             texts = extract_text(data)
 
             # Create filename, use the post's title, replace spaces with underscores and lowercase all the letters
-            filename = data.get("title", "Untitled").replace(" ", "_").lower()
+            title = data.get("title") or "Untitled"
+            filename = title.replace(" ", "_").lower()
 
             # Append post_id to filename
             filename = f"output/txt/{filename}_{post_id}.txt"

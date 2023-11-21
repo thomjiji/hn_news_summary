@@ -1,3 +1,4 @@
+import json
 import requests
 import argparse
 import html
@@ -56,6 +57,16 @@ def recursive_extract_text(comments: list[dict]) -> list[str]:
     return result
 
 
+def extract_comments_keep_hierarchy(data: dict, indent=0):
+    if isinstance(data, dict):
+        if "text" in data and data["text"] is not None:
+            with open("test_output.txt", "a") as f:
+                f.write(" " * indent + data["text"] + "\n")
+        if "children" in data:
+            for child in data["children"]:
+                extract_comments_keep_hierarchy(child, indent + 4)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Fetch Hacker News conversation and save comment texts to a file."
@@ -71,4 +82,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+
+    # Load the JSON data from the file
+    with open("38356534.json", "r") as f:
+        data = json.load(f)
+
+    # Extract the comments
+    extract_comments_keep_hierarchy(data)

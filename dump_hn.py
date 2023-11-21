@@ -1,10 +1,9 @@
-import json
 import requests
 import argparse
 import html
 
 
-def fetch_hn_conversation(post_id, output_file):
+def fetch_hn_conversation(post_id):
     # HN Algolia API endpoint for item details
     api_url = f"https://hn.algolia.com/api/v1/items/{post_id}"
 
@@ -17,19 +16,28 @@ def fetch_hn_conversation(post_id, output_file):
         data = response.json()
 
         # Extract the comments from the response
-        comments = data.get("children", [])
+        comments: list[dict] = data.get("children", [])
 
         # Extract comment text from the recursive JSON structure
         comment_texts = [
-            html.unescape(comment.replace("<p>", " "))
+            html.unescape(comment.replace("<p>", ""))
             for comment in recursive_extract_text(comments)
         ]
 
-        # Write the comment texts to a file
-        with open(output_file, "wb") as file:
+        # Get the title of the original Hacker News post
+        title = data.get("title", "Untitled")
+
+        # Replace spaces with underscores and convert to lowercase
+        title = title.replace(" ", "_").lower()
+
+        # Generate the output file name using the modified title
+        output_file_name = f"output/{title}.txt"
+
+        # Write the comment texts to the generated output file
+        with open(output_file_name, "wb") as file:
             file.write("\n".join(comment_texts).encode("utf-8"))
 
-        print(f"Comment texts saved to {output_file}")
+        print(f"Comment texts saved to {output_file_name}")
 
     else:
         # Print an error message if the request was not successful
@@ -72,21 +80,11 @@ def main():
         description="Fetch Hacker News conversation and save comment texts to a file."
     )
     parser.add_argument("post_id", type=str, help="Hacker News post ID to fetch")
-    parser.add_argument(
-        "output_file", type=str, help="Output file name for saving comment texts"
-    )
 
     args = parser.parse_args()
 
-    fetch_hn_conversation(args.post_id, args.output_file)
+    fetch_hn_conversation(args.post_id)
 
 
 if __name__ == "__main__":
-    # main()
-
-    # Load the JSON data from the file
-    with open("38356534.json", "r") as f:
-        data = json.load(f)
-
-    # Extract the comments
-    extract_comments_keep_hierarchy(data)
+    main()

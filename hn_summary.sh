@@ -10,4 +10,4 @@ fi
 # Make API call, parse and summarize the discussion
 curl -s "https://hn.algolia.com/api/v1/items/$1" | \
   jq -r 'recurse(.children[]) | .text' | \
-  llm -m claude 'Summarize the themes of the opinions expressed here, including quotes where appropriate.'
+  llm -m claude-instant 'Summarize the themes of the opinions expressed here, including quotes where appropriate.'

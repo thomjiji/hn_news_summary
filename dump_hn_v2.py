@@ -29,7 +29,8 @@ def fetch_and_save_text(post_id):
             # Extract texts
             texts = extract_text(data)
 
-            # Create filename, use the post's title, replace spaces with underscores and lowercase all the letters
+            # Create filename, use the post's title, replace spaces with underscores and
+            # lowercase all the letters
             title = data.get("title") or "Untitled"
             filename = title.replace(" ", "_").lower()
 
